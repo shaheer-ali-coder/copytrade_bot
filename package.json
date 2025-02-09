@@ -1,0 +1,19 @@
+{
+  "name": "solana-copy-trading",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@solana/web3.js": "^1.98.0",
+    "@triton-one/yellowstone-grpc": "^2.0.0",
+    "axios": "^1.7.9",
+    "bs58": "^6.0.0",
+    "solana-swap": "^1.1.6",
+    "telegraf": "^4.16.3"
+  }
+}
