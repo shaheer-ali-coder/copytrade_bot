@@ -456,10 +456,10 @@ async function subscribeToTransactions(account, username) {
         // const parsed_transaction = await parseTransaction(signature)
         const parsed_transaction = await extractTokenTradeInfo(signature, account[0]);
         console.log(`&&&&&&&&&&&&&&&&&&&&&&&&&& ${parsed_transaction}`)
-        const user = readJsonFile('data/setting.json')
+        const user = readJsonFile('setting.json')
         const wallet = user[username].wallet
         
-        const users_ = readJsonFile('data/wallet.json')
+        const users_ = readJsonFile('wallet.json')
         const wallet_ = users_[username].find(
           (entry) => entry.publicKey === wallet
         );
@@ -486,7 +486,7 @@ async function subscribeToTransactions(account, username) {
               'status':'BUY',
               'CurrentPrice':price
             }
-          appendToJsonFile('data/open_trade.json',username,data_)
+          appendToJsonFile('open_trade.json',username,data_)
           }
         }else {
           const ___ = tokenmints.find(
@@ -501,7 +501,7 @@ async function subscribeToTransactions(account, username) {
               
               if (success === true) {
                   const price = await fetchTokenPrice(parsed_transaction.token);
-                  const userfile = readJsonFile('data/open_trade.json');
+                  const userfile = readJsonFile('open_trade.json');
       
                   let entryPrice;
                   let updatedTrades = [];
@@ -527,11 +527,11 @@ async function subscribeToTransactions(account, username) {
                       };
       
                       // Append to closed_trade.json
-                      appendToJsonFile('data/closed_trade.json', username, data__);
+                      appendToJsonFile('closed_trade.json', username, data__);
       
                       // Update open_trade.json without the sold token
                       userfile[username] = updatedTrades;
-                      fs.writeFileSync('data/open_trade.json', JSON.stringify(userfile, null, 2), 'utf8');
+                      fs.writeFileSync('open_trade.json', JSON.stringify(userfile, null, 2), 'utf8');
                   }
               }
           }
@@ -583,7 +583,7 @@ bot.action('create_wallet', async(ctx) =>{
     let balance = await checkBalance(newWallet.publicKey);
 
     // Append wallet data
-    appendToJsonFile('data/wallet.json', username, newWallet);
+    appendToJsonFile('wallet.json', username, newWallet);
 
     ctx.reply(
         `✅ *New Wallet Created!* ✅\n\n`
@@ -594,7 +594,7 @@ bot.action('create_wallet', async(ctx) =>{
 })
 bot.action('view_wallet', async (ctx) => {
   const username = ctx.from.username;
-  const wallets = readJsonFile('data/wallet.json');
+  const wallets = readJsonFile('wallet.json');
 
   if (!wallets[username] || wallets[username].length === 0) {
     return ctx.reply('❌ *No wallets found for your account.*', { parse_mode: 'Markdown' });
@@ -634,7 +634,7 @@ bot.action('copytrading', (ctx) => {
 });
 // bot.action('sell_position', async (ctx) => {
 //   const username = ctx.from.username;
-//   const walletsData = readJsonFile('data/copytrade_wallet.json');
+//   const walletsData = readJsonFile('copytrade_wallet.json');
 
 //   if (!walletsData[username] || walletsData[username].length === 0) {
 //       return ctx.reply('⚠️ *No tokens found in your wallet!* \n\n📌 You have no tokens available for selling.', { parse_mode: 'Markdown' });
@@ -666,7 +666,7 @@ bot.action('add_wallet', async (ctx) => {
             return ctx.reply("⚠️ Invalid input. Please enter a valid wallet address.");
         }
        
-        const user = readJsonFile('data/setting.json')
+        const user = readJsonFile('setting.json')
         // console.log(user[username].wallet)
         if(user[username].wallet == "Your Wallet" || user[username].wallet == undefined){
             return ctx.reply('Please add your wallet first in the settings ')
@@ -683,7 +683,7 @@ bot.action('add_wallet', async (ctx) => {
 
 
         // Append wallet to JSON
-        const resultMessage = appendToJsonFile('data/copytrade_wallet.json', username, data);
+        const resultMessage = appendToJsonFile('copytrade_wallet.json', username, data);
 
         await ctx.reply('✅ Wallet Added Successfully!');
 
@@ -694,7 +694,7 @@ bot.action('add_wallet', async (ctx) => {
 });
 bot.action('view_wallets_', async (ctx) => {
   const username = ctx.from.username;
-  const wallets = readJsonFile('data/copytrade_wallet.json');
+  const wallets = readJsonFile('copytrade_wallet.json');
 
   if (!wallets[username] || wallets[username].length === 0) {
     return ctx.reply('❌ *No wallets found for your account.*', { parse_mode: 'Markdown' });
@@ -719,7 +719,7 @@ bot.action('view_wallets_', async (ctx) => {
 });
 bot.action('delete_wallet_', (ctx) => {
     const username = ctx.from.username;
-    const wallets = readJsonFile('data/copytrade_wallet.json');
+    const wallets = readJsonFile('copytrade_wallet.json');
   
     if (!wallets[username] || wallets[username].length === 0) {
         return ctx.reply('❌ *No wallets found for your account.*', { parse_mode: 'Markdown' });
@@ -738,7 +738,7 @@ bot.action('delete_wallet_', (ctx) => {
 // Handle "Delete Wallet" button press
 bot.action('delete_wallet', (ctx) => {
   const username = ctx.from.username;
-  const wallets = readJsonFile('data/wallet.json');
+  const wallets = readJsonFile('wallet.json');
 
   if (!wallets[username] || wallets[username].length === 0) {
       return ctx.reply('❌ *No wallets found for your account.*', { parse_mode: 'Markdown' });
@@ -757,7 +757,7 @@ bot.action('delete_wallet', (ctx) => {
 // Handle "Open Trades" button press
 bot.action('open_trades', async (ctx) => {
   const username = ctx.from.username;
-  const openTrades = readJsonFile('data/open_trade.json');
+  const openTrades = readJsonFile('open_trade.json');
 
   if (!openTrades[username] || openTrades[username].length === 0) {
       return ctx.reply('⚠️ *No active trades found!* \n\n📌 You haven’t executed any trades yet.', { parse_mode: 'Markdown' });
@@ -784,7 +784,7 @@ bot.action('open_trades', async (ctx) => {
 // Handle "Previous Trades" button press
 bot.action('previous_trades', (ctx) => {
   const username = ctx.from.username;
-  const closedTrades = readJsonFile('data/closed_trade.json');
+  const closedTrades = readJsonFile('closed_trade.json');
 
   if (!closedTrades[username] || closedTrades[username].length === 0) {
       return ctx.reply('⏳ *No previous trades found!* \n\n📌 Your trade history is empty.', { parse_mode: 'Markdown' });
@@ -819,7 +819,7 @@ bot.action('main_menu', (ctx) => {
 
 bot.action('settings', (ctx) => {
   const username = ctx.from.username;
-  let userSettings = readJsonFile('data/setting.json')[username]
+  let userSettings = readJsonFile('setting.json')[username]
   if(userSettings == null){
     userSettings =  {
       wallet : 'Your Wallet',
@@ -837,7 +837,7 @@ bot.action('settings', (ctx) => {
       take_profit: '40',
       stop_loss: '20',
   };
-  appendToJsonFile_simple('data/setting.json',username , userSettings)
+  appendToJsonFile_simple('setting.json',username , userSettings)
   }
 
   ctx.reply(
@@ -863,7 +863,7 @@ bot.action('settings', (ctx) => {
 });
 bot.action(/delete_wallet__(\d+)/, (ctx) => {
     const username = ctx.from.username;
-    const wallets = readJsonFile('data/copytrade_wallet.json');
+    const wallets = readJsonFile('copytrade_wallet.json');
     const walletIndex = parseInt(ctx.match[1], 10);
   
     if (!wallets[username] || walletIndex >= wallets[username].length) {
@@ -871,7 +871,7 @@ bot.action(/delete_wallet__(\d+)/, (ctx) => {
     }
   
     const deletedWallet = wallets[username].splice(walletIndex, 1);
-    writeJsonFile('data/copytrade_wallet.json', wallets);
+    writeJsonFile('copytrade_wallet.json', wallets);
   
     ctx.reply(`✅ *Wallet Deleted Successfully!* \n\n🔑 *Public Key:* \n\`${deletedWallet[0].publicKey}\``, {
         parse_mode: 'Markdown',
@@ -879,7 +879,7 @@ bot.action(/delete_wallet__(\d+)/, (ctx) => {
   });
 bot.action(/delete_wallet_(\d+)/, (ctx) => {
     const username = ctx.from.username;
-    const wallets = readJsonFile('data/wallet.json');
+    const wallets = readJsonFile('wallet.json');
     const walletIndex = parseInt(ctx.match[1], 10);
   
     if (!wallets[username] || walletIndex >= wallets[username].length) {
@@ -887,7 +887,7 @@ bot.action(/delete_wallet_(\d+)/, (ctx) => {
     }
   
     const deletedWallet = wallets[username].splice(walletIndex, 1);
-    writeJsonFile('data/wallet.json', wallets);
+    writeJsonFile('wallet.json', wallets);
   
     ctx.reply(`✅ *Wallet Deleted Successfully!* \n\n🔑 *Public Key:* \n\`${deletedWallet[0].publicKey}\``, {
         parse_mode: 'Markdown',
@@ -904,7 +904,7 @@ settingKeys.forEach((key) => {
           const key = keys[keys.length - 1];
           if(key == 'wallet'){
             console.log(key)
-            saveSetting('data/setting.json', username, key, newValue);
+            saveSetting('setting.json', username, key, newValue);
   
             ctx.reply(`✅ *${key.replace('_', ' ')}* updated to *${newValue}*!`, { parse_mode: 'Markdown' });
   
@@ -921,7 +921,7 @@ settingKeys.forEach((key) => {
     else{
 
           console.log(key)
-          saveSetting('data/setting.json', username, key, newValue);
+          saveSetting('setting.json', username, key, newValue);
 
           ctx.reply(`✅ *${key.replace('_', ' ')}* updated to *${newValue}*!`, { parse_mode: 'Markdown' });
 
@@ -932,7 +932,7 @@ settingKeys.forEach((key) => {
 });
 // bot.on('callback_query', async (ctx) => {
 //   const username = ctx.from.username;
-//   const walletsData = readJsonFile('data/copytrade_wallet.json');
+//   const walletsData = readJsonFile('copytrade_wallet.json');
 //   const callbackData = ctx.callbackQuery.data;
 
 //   if (callbackData.startsWith('sell_token_')) {
