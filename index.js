@@ -4,7 +4,7 @@ const { Keypair, Connection } = require('@solana/web3.js')
 // import { SolanaTracker } from "solana-swap";
 const {SolanaTracker} = require('solana-swap')
 const fs = require('fs')
-const bot = new Telegraf('7952106783:AAH7ZM4K6YH567zjUdRkh9bGQ-jyiH1SE1U');
+const bot = new Telegraf('8014991552:AAGlxNc1DPAfXfSh51_dtOLVWuobg3mQtAQ');
 const grpcClient = require("@triton-one/yellowstone-grpc");
 const axios = require('axios');
 
@@ -31,8 +31,8 @@ const expectedTypes = {
     auto_sells: 'boolean',
     reset_buy_times: 'boolean',
     auto_retry: 'int',
-    buy_gas_fee: 'int',
-    sell_gas_fee: 'int',
+    buy_gas_fee: 'float',
+    sell_gas_fee: 'float',
     buy_slippage: 'int',
     sell_slippage: 'int',
     take_profit: 'int',
@@ -819,7 +819,9 @@ bot.action('main_menu', (ctx) => {
 
 bot.action('settings', (ctx) => {
   const username = ctx.from.username;
-  let userSettings = readJsonFile('setting.json')[username]
+  let userSettings= readJsonFile('setting.json')[username]
+  // let userSettings
+  
   if(userSettings == null){
     userSettings =  {
       wallet : 'Your Wallet',
