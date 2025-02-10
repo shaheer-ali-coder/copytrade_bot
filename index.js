@@ -623,7 +623,7 @@ bot.action('copytrading', (ctx) => {
     ctx.reply(
         '📈 Copy Trading Menu. Choose an option:',
         Markup.inlineKeyboard([
-            [Markup.button.callback('➕ Add Wallet', 'add_wallet')],
+            [Markup.button.callback('➕ Add Wallet', 'add_wallet__')],
             [Markup.button.callback('🗑 Delete Wallet', 'delete_wallet_')],
             [Markup.button.callback('🧺 View Wallets', 'view_wallets_')],
             [Markup.button.callback('🔵 Sell Position', 'sell_position')],
@@ -654,7 +654,7 @@ bot.action('copytrading', (ctx) => {
 // });
 
 
-bot.action('add_wallet', async (ctx) => {
+bot.action('add_wallet__', async (ctx) => {
     await ctx.reply("📝 *Enter your wallet address:*", { parse_mode: 'Markdown' });
     
     bot.on('text', async (ctx) => {
