@@ -4,7 +4,7 @@ const { Keypair, Connection } = require('@solana/web3.js')
 // import { SolanaTracker } from "solana-swap";
 const {SolanaTracker} = require('solana-swap')
 const fs = require('fs')
-const bot = new Telegraf('8014991552:AAGlxNc1DPAfXfSh51_dtOLVWuobg3mQtAQ');
+const bot = new Telegraf('7952106783:AAH7ZM4K6YH567zjUdRkh9bGQ-jyiH1SE1U');
 const grpcClient = require("@triton-one/yellowstone-grpc");
 const axios = require('axios');
 let keye = ''
