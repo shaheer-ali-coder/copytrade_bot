@@ -1,1 +1,16 @@
-{}
+{
+  "saim_is_programmer": [
+    {
+      "publicKey": "eact",
+      "wallet": "eact"
+    },
+    {
+      "publicKey": "FTbHLYYZt4s25Y1wsrjn9yV1EwaHLZRqyM5T3gc2DJDm",
+      "wallet": "DSM1txTdq7a2W3SfpzFCAja8oWt9CcKCEZG48FiP9GSw"
+    },
+    {
+      "publicKey": "5eHEoXjEu3ueMTow6yV1Kpyb3JMmQNN5N99uPKhhuaE2",
+      "wallet": "DSM1txTdq7a2W3SfpzFCAja8oWt9CcKCEZG48FiP9GSw"
+    }
+  ]
+}

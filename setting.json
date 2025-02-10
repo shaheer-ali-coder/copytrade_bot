@@ -1,1 +1,18 @@
-{}
+{
+  "saim_is_programmer": {
+    "wallet": "DSM1txTdq7a2W3SfpzFCAja8oWt9CcKCEZG48FiP9GSw",
+    "buy_percentage": "10",
+    "max_buy": "0.5",
+    "total_investment": "10",
+    "buy_times": "1",
+    "auto_sells": "True",
+    "reset_buy_times": "True",
+    "auto_retry": "1",
+    "buy_gas_fee": "0.001",
+    "sell_gas_fee": "0.001",
+    "buy_slippage": "30",
+    "sell_slippage": "30",
+    "take_profit": "40",
+    "stop_loss": "20"
+  }
+}
