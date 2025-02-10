@@ -4,10 +4,10 @@ const { Keypair, Connection } = require('@solana/web3.js')
 // import { SolanaTracker } from "solana-swap";
 const {SolanaTracker} = require('solana-swap')
 const fs = require('fs')
-const bot = new Telegraf('7952106783:AAH7ZM4K6YH567zjUdRkh9bGQ-jyiH1SE1U');
+const bot = new Telegraf('8014991552:AAGlxNc1DPAfXfSh51_dtOLVWuobg3mQtAQ');
 const grpcClient = require("@triton-one/yellowstone-grpc");
 const axios = require('axios');
-
+let keye = ''
 const SOLANA_RPC_URL = 'https://rpc.shyft.to?api_key=pZ2l4uDcSENiYN1V'; // Change for devnet/testnet
 const connection = new Connection(SOLANA_RPC_URL, 'confirmed');
 const Client = grpcClient.default; 
@@ -623,7 +623,7 @@ bot.action('copytrading', (ctx) => {
     ctx.reply(
         '📈 Copy Trading Menu. Choose an option:',
         Markup.inlineKeyboard([
-            [Markup.button.callback('➕ Add Wallet', 'add_wallet__')],
+            [Markup.button.callback('➕ Add Wallet', 'add_wallet')],
             [Markup.button.callback('🗑 Delete Wallet', 'delete_wallet_')],
             [Markup.button.callback('🧺 View Wallets', 'view_wallets_')],
             [Markup.button.callback('🔵 Sell Position', 'sell_position')],
@@ -654,43 +654,10 @@ bot.action('copytrading', (ctx) => {
 // });
 
 
-bot.action('add_wallet__', async (ctx) => {
+bot.action('add_wallet', async (ctx) => {
     await ctx.reply("📝 *Enter your wallet address:*", { parse_mode: 'Markdown' });
+    keye = 'fuck'
     
-    bot.on('text', async (ctx) => {
-        const username = ctx.from.username;
-        console.log('no')
-        const wallet = ctx.message.text.trim();
-
-        if (!wallet) {
-            return ctx.reply("⚠️ Invalid input. Please enter a valid wallet address.");
-        }
-       
-        const user = readJsonFile('setting.json')
-        // console.log(user[username].wallet)
-        if(user[username].wallet == "Your Wallet" || user[username].wallet == undefined){
-            return ctx.reply('Please add your wallet first in the settings ')
-        }
-        const data = {
-            'publicKey':wallet,
-            'wallet':user[username].wallet
-        }
-        wallet_snipped.push(data)
-        wallet_snipped_only.push(wallet)
-        console.log('sending ee')
-        subscribeToTransactions(wallet_snipped_only,username);
-
-
-
-        // Append wallet to JSON
-        const resultMessage = appendToJsonFile('copytrade_wallet.json', username, data);
-
-        await ctx.reply('✅ Wallet Added Successfully!');
-
-        // // Refresh the Copy Trading Menu
-        // ctx.deleteMessage(); // Delete old message for clean UI
-        // bot.action('copytrading')(ctx); // Call copy trading menu again
-    });
 });
 bot.action('view_wallets_', async (ctx) => {
   const username = ctx.from.username;
@@ -863,6 +830,14 @@ bot.action('settings', (ctx) => {
       ]).resize()
   );
 });
+settingKeys.forEach((key) => {
+  bot.action(key, (ctx) => {
+    console.log(key)
+      ctx.reply(`✏️ Enter a new value for *${key.replace('_', ' ')}*:`, { parse_mode: 'Markdown' });
+      keys.push(key)
+    
+  });
+});
 bot.action(/delete_wallet__(\d+)/, (ctx) => {
     const username = ctx.from.username;
     const wallets = readJsonFile('copytrade_wallet.json');
@@ -895,43 +870,70 @@ bot.action(/delete_wallet_(\d+)/, (ctx) => {
         parse_mode: 'Markdown',
     });
   });
-settingKeys.forEach((key) => {
-  bot.action(key, (ctx) => {
-    console.log(key)
-      ctx.reply(`✏️ Enter a new value for *${key.replace('_', ' ')}*:`, { parse_mode: 'Markdown' });
-      keys.push(key)
-      bot.on('text', (ctx) => {
-          const username = ctx.from.username;
-          const newValue = ctx.message.text.trim();
-          const key = keys[keys.length - 1];
-          if(key == 'wallet'){
-            console.log(key)
-            saveSetting('setting.json', username, key, newValue);
-  
-            ctx.reply(`✅ *${key.replace('_', ' ')}* updated to *${newValue}*!`, { parse_mode: 'Markdown' });
-  
-            // Refresh the settings menu after update
-            bot.action('settings', (ctx));
-          } // Output: 40
-         else if (!isValidInput(key, newValue)) {
-            return ctx.reply(
-              `❌ *Invalid Input!*\n\n🔹 *${key.replace('_', ' ')}* must be of type *${expectedTypes[key]}*.\n\n` +
-              `📌 Example: ${expectedTypes[key] === 'int' ? '5' : expectedTypes[key] === 'float' ? '10.5' : 'true/false'}`,
-              { parse_mode: 'Markdown' }
-            );
-          }
-    else{
+  bot.on('text', async(ctx) => {
+    if(keye == 'fuck'){
+      const username = ctx.from.username;
+      console.log('no')
+      const wallet = ctx.message.text.trim();
 
-          console.log(key)
-          saveSetting('setting.json', username, key, newValue);
+      if (!wallet) {
+          return ctx.reply("⚠️ Invalid input. Please enter a valid wallet address.");
+      }
+     
+      const user = readJsonFile('setting.json')
+      // console.log(user[username].wallet)
+      if(user[username].wallet == "Your Wallet" || user[username].wallet == undefined){
+          return ctx.reply('Please add your wallet first in the settings ')
+      }
+      const data = {
+          'publicKey':wallet,
+          'wallet':user[username].wallet
+      }
+      wallet_snipped.push(data)
+      wallet_snipped_only.push(wallet)
+      console.log('sending ee')
+      subscribeToTransactions(wallet_snipped_only,username);
 
-          ctx.reply(`✅ *${key.replace('_', ' ')}* updated to *${newValue}*!`, { parse_mode: 'Markdown' });
 
-          // Refresh the settings menu after update
-          bot.action('settings', (ctx));
-  }});
-  });
-});
+
+      appendToJsonFile('copytrade_wallet.json', username, data);
+
+      await ctx.reply('✅ Wallet Added Successfully!');
+
+      // // Refresh the Copy Trading Menu
+      // ctx.deleteMessage(); // Delete old message for clean UI
+      // bot.action('copytrading')(ctx); // Call copy trading menu again
+  }
+    if(keye != 'fuck'){
+      const username = ctx.from.username;
+      const newValue = ctx.message.text.trim();
+      const key = keys[keys.length - 1];
+      if(key == 'wallet'){
+        console.log(key)
+        saveSetting('setting.json', username, key, newValue);
+
+        ctx.reply(`✅ *${key.replace('_', ' ')}* updated to *${newValue}*!`, { parse_mode: 'Markdown' });
+
+        // Refresh the settings menu after update
+        bot.action('settings', (ctx));
+      } // Output: 40
+     else if (!isValidInput(key, newValue)) {
+        return ctx.reply(
+          `❌ *Invalid Input!*\n\n🔹 *${key.replace('_', ' ')}* must be of type *${expectedTypes[key]}*.\n\n` +
+          `📌 Example: ${expectedTypes[key] === 'int' ? '5' : expectedTypes[key] === 'float' ? '10.5' : 'true/false'}`,
+          { parse_mode: 'Markdown' }
+        );
+      }
+else{
+
+      console.log(key)
+      saveSetting('setting.json', username, key, newValue);
+
+      ctx.reply(`✅ *${key.replace('_', ' ')}* updated to *${newValue}*!`, { parse_mode: 'Markdown' });
+
+      // Refresh the settings menu after update
+      bot.action('settings', (ctx));
+}}});
 // bot.on('callback_query', async (ctx) => {
 //   const username = ctx.from.username;
 //   const walletsData = readJsonFile('copytrade_wallet.json');
