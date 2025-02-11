@@ -4,7 +4,7 @@ const { Keypair, Connection } = require('@solana/web3.js')
 // import { SolanaTracker } from "solana-swap";
 const {SolanaTracker} = require('solana-swap')
 const fs = require('fs')
-const bot = new Telegraf('7952106783:AAH7ZM4K6YH567zjUdRkh9bGQ-jyiH1SE1U');
+const bot = new Telegraf('8014991552:AAGlxNc1DPAfXfSh51_dtOLVWuobg3mQtAQ');
 const grpcClient = require("@triton-one/yellowstone-grpc");
 const axios = require('axios');
 let keye = ''
@@ -281,7 +281,7 @@ async function buyToken(privateKeyHex, TokenMint, Amount, Gas) {
   const secretKeyArray = hexToByteArray(privateKeyHex);
   const keypair = Keypair.fromSecretKey(secretKeyArray);
 
-  const connection = new Connection("https://mainnet.helius-rpc.com/?api-key=d9d1bbd0-bc01-4388-acc8-279e6d3b9705");
+  // const connection = new Connection("https://rpc.shyft.to?api_key=pZ2l4uDcSENiYN1V");
   const solanaTracker = new SolanaTracker(keypair, connection.rpcEndpoint);
 
   // Fetch latest blockhash to prevent expired blockhash errors
@@ -300,17 +300,17 @@ async function buyToken(privateKeyHex, TokenMint, Amount, Gas) {
   try {
     const txid = await solanaTracker.performSwap(swapResponse, {
       sendOptions: { 
-        skipPreflight: true,
+        skipPreflight: true,  // ✅ Speeds up transaction by skipping simulation
         recentBlockhash: latestBlockhash.blockhash,
         lastValidBlockHeight: latestBlockhash.lastValidBlockHeight,
       },
-      confirmationRetries: 5,
-      confirmationRetryTimeout: 2000,
-      lastValidBlockHeightBuffer: 150,
-      resendInterval: 3000,
-      confirmationCheckInterval: 3000,
-      commitment: "processed",
-      skipConfirmationCheck: false,
+      confirmationRetries: 2,  // 🔽 Reduce retries to minimize delay
+      confirmationRetryTimeout: 500,  // 🔽 Reduce timeout (0.5s instead of 2s)
+      lastValidBlockHeightBuffer: 50,  // 🔽 Smaller buffer for quicker expiration
+      resendInterval: 1000,  // 🔽 Resend every 1s instead of 3s
+      confirmationCheckInterval: 1000,  // 🔽 Check confirmation every 1s instead of 3s
+      commitment: "confirmed",  // ✅ Faster than "finalized" but safer than "processed"
+      skipConfirmationCheck: true,  // ✅ Skips waiting for confirmation check
     });
     console.log("Transaction ID:", txid);
     console.log("Transaction URL:", `https://solscan.io/tx/${txid}`);
@@ -413,6 +413,7 @@ async function sellToken(privateKeyHex, TokenMint, Amount, Gas) {
   console.log("⚠️ Unable to fetch token price from any source.");
   return null; // Return null if all APIs fail
 }
+const { performance } = require('perf_hooks');
 // Async function to subscribe to real-time transactions
 async function subscribeToTransactions(account, username) {
     try {
@@ -450,12 +451,21 @@ async function subscribeToTransactions(account, username) {
       // Listen for incoming data
       stream.on("data",async (transactionUpdate) => {
         // console.log(transactionUpdate)
+        const startencoding = performance.now(); // Start parsing timer
         if(transactionUpdate.transaction != undefined){
         const signature = await encodeBase58(transactionUpdate.transaction.transaction.signature);
-        console.log(signature)
+        const endencoding = performance.now(); // Start parsing timer
+        console.log(`Encoding Time: ${(endencoding - startencoding).toFixed(2)} ms`);
+        const startParsing = performance.now(); // Start parsing timer
+
+        // console.log(signature)
         // const parsed_transaction = await parseTransaction(signature)
         const parsed_transaction = await extractTokenTradeInfo(signature, account[0]);
+        const endParsing = performance.now(); // End parsing timer
+
         console.log(`&&&&&&&&&&&&&&&&&&&&&&&&&& ${parsed_transaction}`)
+        console.log(`Parsing Time: ${(endParsing - startParsing).toFixed(2)} ms`);
+          const fucktime = performance.now()
         const user = readJsonFile('setting.json')
         const wallet = user[username].wallet
         
@@ -469,10 +479,16 @@ async function subscribeToTransactions(account, username) {
         const amount = calculatedAmount < user[username].max_buy ? calculatedAmount : user[username].max_buy;
 
         const privateKey =wallet_.privateKey
+        const fucktime_ = performance.now()
+        console.log(`fuck Time: ${(fucktime_ - fucktime).toFixed(2)} ms`);
+
         // console.log(parsed_transaction)
         if(parsed_transaction.tradeType == 'Buy'){
-            console.log('buying it babdy')
+            // console.log('buying it babdy')
+            const buyTime = performance.now()
             const sucess = await buyToken(privateKey , parsed_transaction.token , amount , buy_gas_fee)
+            const buyTime_ = performance.now()
+            console.log(`Buy Time : ${(buyTime_-buyTime).toFixed(2)} ms.`)
             if(sucess == true){
             const data = {
               'privateKey':privateKey,
