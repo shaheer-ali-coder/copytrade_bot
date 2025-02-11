@@ -345,20 +345,24 @@ async function sellToken(privateKeyHex, TokenMint, Amount, Gas) {
   );
 
   try {
-    const txid = await solanaTracker.performSwap(swapResponse, {
-      sendOptions: { 
-        skipPreflight: true,
-        recentBlockhash: latestBlockhash.blockhash,
-        lastValidBlockHeight: latestBlockhash.lastValidBlockHeight,
-      },
-      confirmationRetries: 5,
-      confirmationRetryTimeout: 2000,
-      lastValidBlockHeightBuffer: 150,
-      resendInterval: 3000,
-      confirmationCheckInterval: 3000,
-      commitment: "processed",
-      skipConfirmationCheck: false,
-    });
+    const priorityFee = 200000; // Set priority fee for ultra-fast execution
+
+const txid = await solanaTracker.performSwap(swapResponse, {
+  sendOptions: { 
+    skipPreflight: true,  
+    recentBlockhash: latestBlockhash.blockhash,
+    lastValidBlockHeight: latestBlockhash.lastValidBlockHeight,
+  },
+  priorityFee,  
+  confirmationRetries: 1,  
+  confirmationRetryTimeout: 250,  
+  lastValidBlockHeightBuffer: 20,  
+  resendInterval: 500,  
+  confirmationCheckInterval: 500,  
+  commitment: "confirmed",  // or "finalized" if Solscan is slow
+  skipConfirmationCheck: true,  
+});
+
     return true
     console.log("Transaction ID:", txid);
     console.log("Transaction URL:", `https://solscan.io/tx/${txid}`);
