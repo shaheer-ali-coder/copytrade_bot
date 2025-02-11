@@ -10,6 +10,7 @@ const axios = require('axios');
 let keye = ''
 const SOLANA_RPC_URL = 'https://rpc.shyft.to?api_key=pZ2l4uDcSENiYN1V'; // Change for devnet/testnet
 const connection = new Connection(SOLANA_RPC_URL, 'confirmed');
+const connection_ = new Connection('https://mainnet.helius-rpc.com/?api-key=940baa07-0edd-4f6c-90ef-1dcfac045b1c','confirmed')
 const Client = grpcClient.default; 
 const CommitmentLevel = grpcClient.CommitmentLevel;
 const client = new Client(
@@ -282,10 +283,10 @@ async function buyToken(privateKeyHex, TokenMint, Amount, Gas) {
   const keypair = Keypair.fromSecretKey(secretKeyArray);
 
   // const connection = new Connection("https://rpc.shyft.to?api_key=pZ2l4uDcSENiYN1V");
-  const solanaTracker = new SolanaTracker(keypair, connection.rpcEndpoint);
+  const solanaTracker = new SolanaTracker(keypair, connection_.rpcEndpoint);
 
   // Fetch latest blockhash to prevent expired blockhash errors
-  const latestBlockhash = await connection.getLatestBlockhash();
+  const latestBlockhash = await connection_.getLatestBlockhash();
   
   const swapResponse = await solanaTracker.getSwapInstructions(
       "So11111111111111111111111111111111111111112",// From Token (SOL)
