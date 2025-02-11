@@ -299,19 +299,20 @@ async function buyToken(privateKeyHex, TokenMint, Amount, Gas) {
 
   try {
     const txid = await solanaTracker.performSwap(swapResponse, {
-      sendOptions: { 
-        skipPreflight: true,  // ✅ Speeds up transaction by skipping simulation
-        recentBlockhash: latestBlockhash.blockhash,
-        lastValidBlockHeight: latestBlockhash.lastValidBlockHeight,
-      },
-      confirmationRetries: 2,  // 🔽 Reduce retries to minimize delay
-      confirmationRetryTimeout: 500,  // 🔽 Reduce timeout (0.5s instead of 2s)
-      lastValidBlockHeightBuffer: 50,  // 🔽 Smaller buffer for quicker expiration
-      resendInterval: 1000,  // 🔽 Resend every 1s instead of 3s
-      confirmationCheckInterval: 1000,  // 🔽 Check confirmation every 1s instead of 3s
-      commitment: "confirmed",  // ✅ Faster than "finalized" but safer than "processed"
-      skipConfirmationCheck: true,  // ✅ Skips waiting for confirmation check
-    });
+  sendOptions: { 
+    skipPreflight: true,  
+    recentBlockhash: latestBlockhash.blockhash,
+    lastValidBlockHeight: latestBlockhash.lastValidBlockHeight,
+  },
+  confirmationRetries: 1,  
+  confirmationRetryTimeout: 250,  
+  lastValidBlockHeightBuffer: 20,  
+  resendInterval: 500,  
+  confirmationCheckInterval: 500,  
+  commitment: "processed",  
+  skipConfirmationCheck: true,  
+});
+
     console.log("Transaction ID:", txid);
     console.log("Transaction URL:", `https://solscan.io/tx/${txid}`);
     return true
