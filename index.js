@@ -200,7 +200,7 @@ async function encodeBase58(buffer) {
 }
 async function extractTokenTradeInfo(signature, targetOwner) {
     const si = await parseTransaction(signature);
-
+    console.log(si)
     if (!si || !si.transaction) {
         console.log('Transaction not found or invalid.');
         return;
@@ -456,6 +456,7 @@ async function subscribeToTransactions(account, username) {
         const startencoding = performance.now(); // Start parsing timer
         if(transactionUpdate.transaction != undefined){
         const signature = await encodeBase58(transactionUpdate.transaction.transaction.signature);
+            console.log(signature)
         const endencoding = performance.now(); // Start parsing timer
         console.log(`Encoding Time: ${(endencoding - startencoding).toFixed(2)} ms`);
         const startParsing = performance.now(); // Start parsing timer
